@@ -1,4 +1,6 @@
-# nostr-bookmark-viewer5
+# Shosai(書斎)
+Nostrのブックマーク（kind:10003,30003,30001）を整理整頓するためのツール
+
 https://shosai.lumilumi.app/
 
 > [!NOTE]
@@ -7,7 +9,7 @@ https://shosai.lumilumi.app/
 > 旧バージョンのデモ: https://nostr-bookmark-viewer3.vercel.app/
 
 ## 概要
-nostr-bookmark-viewer5 は、nostr-bookmark-viewer3 をベースに以下の改善を加えた最新版です。
+shosai は、nostr-bookmark-viewer3 をベースに以下の改善を加えた最新版です。
 
 - **Svelte 5** 対応
 - パフォーマンス最適化
@@ -25,3 +27,4 @@ nostr-bookmark-viewer5 は、nostr-bookmark-viewer3 をベースに以下の改�
 ```bash
 npm install
 npm run dev
+

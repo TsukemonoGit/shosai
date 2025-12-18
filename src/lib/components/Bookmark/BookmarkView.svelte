@@ -171,6 +171,7 @@
 			return;
 		}
 		const count = selectedCount;
+		const selected = $state.snapshot(selectedBookmark);
 		try {
 			// 1. 移動先のブックマークを取得
 			const destinationBookmarkMap = get(bookmarkItemsMap);
@@ -242,7 +243,7 @@
 
 			// 移動先の更新が成功した場合のみ、移動元の更新に進む
 			const sourceEventParams = await createEventParametersForBookmark(
-				selectedBookmark,
+				selected,
 				remainingTagsAsArray,
 				isPrivate
 			);
@@ -274,6 +275,7 @@
 			});
 			return;
 		}
+		const selected = $state.snapshot(selectedBookmark);
 		const newTagItem: DndTagItem = {
 			id: `${tagsToDisplay.length}`,
 			tag,
@@ -283,7 +285,7 @@
 		const tagsToSave = updatedTagsToDisplay.map((item) => item.tag);
 
 		// 修正: createEventParametersForBookmark を使用
-		const ev = await createEventParametersForBookmark(selectedBookmark, tagsToSave, isPrivate);
+		const ev = await createEventParametersForBookmark(selected, tagsToSave, isPrivate);
 		if (ev) {
 			await publishEvent(ev, $t('tagEditor.actions.tagAdd'));
 		}
@@ -305,10 +307,10 @@
 			});
 			return;
 		}
-
+		const selected = $state.snapshot(selectedBookmark); //クリック時点でのデータで固定
 		const tagsToSave = tagsToDisplay.map((item) => item.tag);
 		// 修正: createEventParametersForBookmark を使用
-		const ev = await createEventParametersForBookmark(selectedBookmark, tagsToSave, isPrivate);
+		const ev = await createEventParametersForBookmark(selected, tagsToSave, isPrivate);
 		if (ev) {
 			await publishEvent(ev, $t('tagEditor.actions.update'));
 		}
@@ -321,6 +323,7 @@
 
 	async function saveTagEdit(id: string, newTag: string[]) {
 		if (!selectedBookmark) return;
+		const selected = $state.snapshot(selectedBookmark); //クリック時点でのデータで固定
 		const tagIndex = tagsToDisplay.findIndex((t) => t.id === id);
 		if (tagIndex === -1) {
 			toastStore.error({
@@ -335,7 +338,7 @@
 
 		const tagsToSave = updatedTags.map((item) => item.tag);
 		// 修正: createEventParametersForBookmark を使用
-		const ev = await createEventParametersForBookmark(selectedBookmark, tagsToSave, isPrivate);
+		const ev = await createEventParametersForBookmark(selected, tagsToSave, isPrivate);
 		if (ev) {
 			await publishEvent(ev, $t('tagEditor.actions.update'));
 		}

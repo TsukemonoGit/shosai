@@ -46,6 +46,7 @@
 		"updatedAt": "Updated at",
 		"public": "Public",
 		"private": "Private",
+		"OrderOn": "Newest First",
 		"dragToSort": "Drag tags to sort",
 		"selectAll": "Select All",
 		"noSelection": "No bookmarks selected",

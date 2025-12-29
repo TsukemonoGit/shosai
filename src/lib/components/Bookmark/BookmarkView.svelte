@@ -6,7 +6,7 @@
 	import { flip } from 'svelte/animate';
 	import { Select } from 'bits-ui';
 
-	import { ChevronsUpDown } from '@lucide/svelte';
+	import { Check, ChevronsUpDown, X } from '@lucide/svelte';
 	import { formatAbsoluteDateFromUnix, toastStore } from '$lib/utils/util';
 	import type { EventParameters } from 'nostr-typedef';
 
@@ -19,6 +19,7 @@
 	import { get } from 'svelte/store';
 	import { publishEvent } from '$lib/nostr/publish';
 	import ItemMenu from '../Layout/Dialog/ItemMenu.svelte';
+	import { Switch } from '@skeletonlabs/skeleton-svelte';
 
 	interface Props {
 		selectedBookmark: BookmarkItem | null;
@@ -31,6 +32,7 @@
 	);
 	let isPrivate = $state(false);
 	let isSorting = $state(false);
+	let isReverseOrder = $state(false);
 	let selectedTagIds = $state(new Set<string>());
 	let tagsToDisplay: DndTagItem[] = $state([]); //dとかフィルターする前の配列
 	let displayTags: DndTagItem[] = $state([]); //画面に出すものにフィルターした配列
@@ -65,9 +67,16 @@
 	];
 	$effect(() => {
 		tagsToDisplay;
+		isReverseOrder;
+		isSorting;
 
 		untrack(async () => {
-			displayTags = tagsToDisplay.filter((item) => !excludedTags.has(item.tag[0]));
+			const filtered = tagsToDisplay.filter((item) => !excludedTags.has(item.tag[0]));
+			if (isSorting) {
+				displayTags = filtered;
+			} else {
+				displayTags = isReverseOrder ? [...filtered].reverse() : filtered;
+			}
 		});
 	});
 	$effect(() => {
@@ -743,6 +752,21 @@
 				>
 					{$t('bookmark.private')}
 				</button>
+				<label class="ml-2 inline-flex items-center space-x-1">
+					<!-- Switch -->
+					<Switch
+						name="reverseOrder"
+						checked={isReverseOrder}
+						onCheckedChange={() => (isReverseOrder = !isReverseOrder)}
+					>
+						{#snippet inactiveChild()}<X size="14" />{/snippet}
+						{#snippet activeChild()}<Check size="14" />{/snippet}</Switch
+					>
+
+					<span class="text-sm">
+						{$t('bookmark.OrderOn')}
+					</span>
+				</label>
 			</div>
 		</div>
 		{#if editable}

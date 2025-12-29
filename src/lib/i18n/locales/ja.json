@@ -46,6 +46,7 @@
 		"updatedAt": "更新日時",
 		"public": "公開",
 		"private": "非公開",
+		"OrderOn": "新しい順",
 		"dragToSort": "タグをドラッグして並べ替え",
 		"selectAll": "すべて選択",
 		"noSelection": "ブックマークが選択されていません",

@@ -1,4 +1,5 @@
 import * as Nostr from 'nostr-typedef';
+import { SvelteMap } from 'svelte/reactivity';
 import { writable } from 'svelte/store';
 
 export interface BookmarkItem {
@@ -10,7 +11,7 @@ export interface BookmarkItem {
 	event: Nostr.Event;
 }
 //単一のデータストア: kind: 10003, 30001, 30003の3種類のイベントが、すべて同じMap<string, BookmarkItem>ストアに集約されます。
-export const bookmarkItemsMap = writable<Map<string, BookmarkItem>>(new Map());
+export const bookmarkItemsMap = writable<SvelteMap<string, BookmarkItem>>(new SvelteMap());
 
 /* // kind: 10003のみを含む派生ストア
 export const BookmarkList = derived(bookmarkItemsMap, ($map) => {

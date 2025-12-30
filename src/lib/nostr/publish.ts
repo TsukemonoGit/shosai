@@ -6,7 +6,10 @@ import { nip07Signer, type OkPacket } from 'rx-nostr';
 import { publishSignEvent } from './nostrSubscriptions';
 
 // 新しい共通関数を作成
-export async function publishEvent(eventParameters: EventParameters, title: string) {
+export async function publishEvent(
+	eventParameters: EventParameters,
+	title: string
+): Promise<boolean> {
 	try {
 		// 署名（ここで await して完了を保証する）
 		const signer = nip07Signer();
@@ -36,6 +39,7 @@ export async function publishEvent(eventParameters: EventParameters, title: stri
 		});
 
 		await publishPromise;
+		return true;
 	} catch (error) {
 		// signer.signEvent などの失敗時
 		const tFunc = get(t);
@@ -46,5 +50,6 @@ export async function publishEvent(eventParameters: EventParameters, title: stri
 				message: typeof error === 'string' ? error : tFunc('common.unknownError')
 			})
 		});
+		return false;
 	}
 }

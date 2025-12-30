@@ -3,7 +3,7 @@
 	import { bookmarkItemsMap, type BookmarkItem } from '$lib/types/bookmark.svelte';
 	import { Github, House } from '@lucide/svelte';
 	import type { EventParameters } from 'nostr-typedef';
-	import ConfirmDeleteList from '../Layout/Dialog/ConfirmDeleteList.svelte';
+
 	import { loginUser } from '$lib/utils/stores.svelte';
 	import CreateNewList from '../Layout/Dialog/CreateNewList.svelte';
 	import type { CreateData } from '$lib/types/utiles';
@@ -12,7 +12,6 @@
 	import Link from '../Layout/Link.svelte';
 	import { goto } from '$app/navigation';
 	import About from './About.svelte';
-	import { tick } from 'svelte';
 
 	interface Props {
 		pubkey: string;
@@ -37,29 +36,6 @@
 	async function handleItemClick(atag: string) {
 		selectedAtag = atag;
 		onItemSelect?.();
-	}
-
-	async function handleDeleteItem(item: BookmarkItem) {
-		console.log(`${$t('bookmark.deleteItem')} ${item.atag}`);
-
-		const ev: EventParameters = {
-			kind: 5,
-			tags: [
-				['a', item.atag],
-				['e', item.event.id]
-			],
-			content: ''
-		};
-
-		try {
-			await publishEvent(ev, $t('tagEditor.actions.delete'));
-
-			$bookmarkItemsMap.delete(item.atag);
-			$bookmarkItemsMap = $bookmarkItemsMap;
-			console.log(`${$t('bookmark.removedFromMap')} ${item.atag}`);
-		} catch (error) {
-			console.error(`${$t('bookmark.deleteError')}`, error);
-		}
 	}
 
 	async function createNewList(data: CreateData) {
@@ -91,15 +67,16 @@
 		// Topページに戻る処理
 		goto('/');
 	}
+	let list = [10003, 30003, 30001];
 </script>
 
 <nav class="h-full overflow-y-auto p-2 text-sm">
-	{#each Object.entries(items) as [key, store]}
+	{#each Object.entries(items) as [key, store], index}
 		<section class="mb-4">
 			<h2
 				class="sticky top-0 mb-2 rounded-sm bg-neutral-100/50 text-2xl font-bold text-neutral-700 backdrop-blur-sm dark:bg-neutral-900/50 dark:text-neutral-300"
 			>
-				{$t(`bookmark.sections.${key}`)}
+				{$t(`bookmark.sections.${list[index]}`)}
 			</h2>
 
 			{#if key === 'Bookmarksets' && editable}
@@ -116,13 +93,6 @@
 						>
 							{item.title || item.identifier || item.event.kind}
 						</button>
-						{#if editable}
-							<ConfirmDeleteList
-								onConfirm={() => handleDeleteItem(item)}
-								{item}
-								isSelected={selectedAtag === item.atag}
-							/>
-						{/if}
 					</li>
 				{/each}
 			</ul>

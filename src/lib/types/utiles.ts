@@ -1,4 +1,5 @@
 export interface UserProfile {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any;
 	name?: string;
 	about?: string;
@@ -23,4 +24,11 @@ export interface CreateData {
 	title: string;
 	image: string;
 	description: string;
+}
+export interface MenuItem {
+	id: string;
+	label: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Icon?: any;
+	separator?: boolean;
 }

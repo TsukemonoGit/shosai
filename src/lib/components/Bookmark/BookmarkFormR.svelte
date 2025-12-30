@@ -11,8 +11,8 @@
 	let { onSubmit, initialTag }: Props = $props();
 
 	// $state変数をpropsの初期値で設定
-	let url = $state(initialTag?.[1] || '');
-	let title = $state(initialTag?.[2] || '');
+	let url = $derived(initialTag?.[1] || '');
+	let title = $derived(initialTag?.[2] || '');
 
 	function handleSubmit() {
 		const formData = ['r', url, title].filter(Boolean);

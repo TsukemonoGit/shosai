@@ -18,8 +18,10 @@
 	import MoveTagButton from './MoveTagButton.svelte';
 	import { get } from 'svelte/store';
 	import { publishEvent } from '$lib/nostr/publish';
-	import ItemMenu from '../Layout/Dialog/ItemMenu.svelte';
+
 	import { Switch } from '@skeletonlabs/skeleton-svelte';
+	import ItemMenu from '../Layout/Dialog/ItemMenu.svelte';
+	import ListMenu from '../Layout/Dialog/ListMenu.svelte';
 
 	interface Props {
 		selectedBookmark: BookmarkItem | null;
@@ -248,8 +250,11 @@
 			}
 
 			// 5. 移動先のブックマークを更新し、成功したら移動元を更新
-			await publishEvent(destinationEventParams, $t('tagEditor.actions.publish'));
-
+			const res = await publishEvent(destinationEventParams, $t('tagEditor.actions.publish'));
+			if (!res) {
+				//失敗したら終わり
+				return;
+			}
 			// 移動先の更新が成功した場合のみ、移動元の更新に進む
 			const sourceEventParams = await createEventParametersForBookmark(
 				selected,
@@ -696,12 +701,7 @@
 				</span>
 			{/if}
 			<div class="ml-auto">
-				<ItemMenu
-					tag={['a', selectedBookmark.atag]}
-					event={selectedBookmark.event}
-					onConformEditTag={(editedTag) => {}}
-					editable={false}
-				/>
+				<ListMenu item={selectedBookmark} {editable} />
 			</div>
 		</div>
 		<div class="mb-4 flex items-center justify-between">
@@ -825,9 +825,9 @@
 						/>
 
 						<ItemMenu
-							setRelayHint={(relay) => setRelayHint(item, relay)}
+							setRelayHint={(relay: string) => setRelayHint(item, relay)}
 							tag={item.tag}
-							onConformEditTag={(editedTag) => saveTagEdit(item.id, editedTag)}
+							onConformEditTag={(editedTag: string[]) => saveTagEdit(item.id, editedTag)}
 							{editable}
 						/>
 					</div>

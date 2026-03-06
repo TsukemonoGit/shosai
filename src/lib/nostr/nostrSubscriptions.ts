@@ -24,7 +24,7 @@ import { bookmarkItemsMap, type BookmarkItem } from '$lib/types/bookmark.svelte'
 import { SvelteMap } from 'svelte/reactivity';
 import { relayStateMap } from '$lib/utils/stores.svelte';
 import { createQuery, type QueryKey, type CreateQueryResult } from '@tanstack/svelte-query';
-import { derived, writable, type Writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 
 const rxNostr: ReturnType<typeof createRxNostr> = createRxNostr({
 	verifier,
@@ -72,7 +72,7 @@ export async function fetchLatestRelayList(
 					if (!evt) return;
 					if (!event || evt.created_at > event.created_at) event = evt;
 				},
-				error: (err) => {
+				error: () => {
 					resolve(event);
 				},
 				complete: () => {
@@ -210,7 +210,7 @@ export function useReq(
 		queryFn: ({ signal }) => {
 			//りフェッチクエリーしたときにuniqueリセットされてほしいからここに書く
 			const keyFn = (packet: EventPacket): string => packet.event.id;
-			const [unique, uniMap] = createUniq(keyFn);
+			const [unique] = createUniq(keyFn);
 
 			const req = createRxBackwardReq();
 			const obs = rxNostr.use(req, { relays }).pipe(tie, unique, operator ? operator : tap());
@@ -269,7 +269,8 @@ const maxWaitingTime = 5000; // 3秒
 export async function publishSignEvent(ev: Nostr.Event): Promise<OkPacket[]> {
 	return new Promise<OkPacket[]>((resolve) => {
 		const results: OkPacket[] = [];
-		let subscription: any;
+		// eslint-disable-next-line prefer-const
+		let subscription: Subscription | null;
 
 		// タイムアウトを設定
 		const timeoutId = setTimeout(() => {
@@ -367,7 +368,7 @@ export function useRelayEventTracking(
 	const eventStore = writable<Nostr.Event | null>(null);
 
 	let isCompleted = false;
-	let timeoutHandle: any;
+	let timeoutHandle: number;
 
 	const req = createRxBackwardReq();
 
@@ -378,6 +379,7 @@ export function useRelayEventTracking(
 		.pipe(tie, operator ? operator : tap());
 
 	// タイムアウト設定
+	// eslint-disable-next-line prefer-const
 	timeoutHandle = setTimeout(() => {
 		if (!isCompleted) {
 			isCompleted = true;

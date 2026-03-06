@@ -21,6 +21,7 @@ import * as Nostr from 'nostr-typedef';
 import { createTie } from './operators';
 import { bookmarkableTagsSet, defaultRelays } from '$lib/utils/constants';
 import { bookmarkItemsMap, type BookmarkItem } from '$lib/types/bookmark.svelte';
+import { SvelteMap } from 'svelte/reactivity';
 import { relayStateMap } from '$lib/utils/stores.svelte';
 import { createQuery, type QueryKey, type CreateQueryResult } from '@tanstack/svelte-query';
 import { derived, writable, type Writable } from 'svelte/store';
@@ -41,7 +42,7 @@ rxNostr.createConnectionStateObservable().subscribe((packet) => {
 const [tie, tieMap] = createTie();
 
 export function resetNostr() {
-	bookmarkItemsMap.set(new Map<string, BookmarkItem>());
+	bookmarkItemsMap.set(new SvelteMap<string, BookmarkItem>());
 }
 
 export function getRelaysById(id: string): string[] {
@@ -124,7 +125,7 @@ function upsertByAtag(incoming: Nostr.Event) {
 	bookmarkItemsMap.update((current) => {
 		const existing = current.get(bookmarkItem.atag);
 		if (!existing || incoming.created_at > existing.event.created_at) {
-			const newMap = new Map(current);
+			const newMap = new SvelteMap(current);
 			newMap.set(bookmarkItem.atag, bookmarkItem);
 			return newMap;
 		}
@@ -154,7 +155,7 @@ export function subscribeBookmarkData(pubkey: string) {
 	const initialBookmarkItem = eventToBookmarkItem(initialEvent);
 
 	// writableストアのsetメソッドで初期化
-	const initialMap = new Map<string, BookmarkItem>();
+	const initialMap = new SvelteMap<string, BookmarkItem>();
 	initialMap.set(initialBookmarkItem.atag, initialBookmarkItem);
 
 	bookmarkItemsMap.set(initialMap);

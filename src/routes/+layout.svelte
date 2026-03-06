@@ -35,7 +35,7 @@
 			});
 
 			await waitNostr(1000);
-			const initNostrLogin = await import('nostr-login');
+			const initNostrLogin = await import('@konemono/nostr-login');
 			await initNostrLogin.init({
 				/*options*/
 			});

@@ -10,15 +10,21 @@
 	let { part, height = 24 }: Props = $props();
 	let imgError: boolean = $state(false);
 	let imgLoad: boolean = $state(false);
+
+	let emoji = $derived(
+		part.type === 'custom_emoji' && part.metadata.hasMetadata ? part.metadata : null
+	);
 </script>
 
-{#if part.metadata && part.metadata.url && !imgError && !commonMenu.get().light.checked}{#if !imgLoad}{part.content}{/if}<img
+{#if emoji && !imgError && !commonMenu.get().light.checked}
+	{#if !imgLoad}{part.content}{/if}
+	<img
 		height={`${height}px`}
 		loading="lazy"
 		alt={`${part.content}`}
-		src={part.metadata!.url as string}
+		src={emoji.url}
 		title={`${part.content}`}
-		class={`m-0 inline overflow-hidden object-contain align-bottom`}
+		class="m-0 inline overflow-hidden object-contain align-bottom"
 		style={`height:${height}px`}
 		onload={() => {
 			imgLoad = true;
@@ -26,4 +32,7 @@
 		onerror={() => {
 			imgError = true;
 		}}
-	/>{:else}{part.content}{/if}
+	/>
+{:else}
+	{part.content}
+{/if}

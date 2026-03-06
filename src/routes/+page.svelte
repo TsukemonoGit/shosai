@@ -18,7 +18,7 @@
 		error = '';
 
 		try {
-			const nostrLogin = await import('nostr-login');
+			const nostrLogin = await import('@konemono/nostr-login');
 			await nostrLogin.launch();
 		} catch (err) {
 			error = $t('login.error.failed');

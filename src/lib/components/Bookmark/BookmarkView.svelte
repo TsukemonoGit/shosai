@@ -22,6 +22,7 @@
 	import { Switch } from '@skeletonlabs/skeleton-svelte';
 	import ItemMenu from '../Layout/Dialog/ItemMenu.svelte';
 	import ListMenu from '../Layout/Dialog/ListMenu.svelte';
+	import { SvelteSet } from 'svelte/reactivity';
 
 	interface Props {
 		selectedBookmark: BookmarkItem | null;
@@ -115,7 +116,7 @@
 				);
 				if (!decryptedContent) return [];
 				rawTags = JSON.parse(decryptedContent) as string[][];
-			} catch (error) {
+			} catch {
 				return [];
 			}
 		} else {
@@ -144,7 +145,7 @@
 	}
 
 	function toggleTagSelection(id: string) {
-		const newSelectedTagIds = new Set(selectedTagIds);
+		const newSelectedTagIds = new SvelteSet(selectedTagIds);
 		if (newSelectedTagIds.has(id)) {
 			newSelectedTagIds.delete(id);
 		} else {
